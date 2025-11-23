@@ -54,13 +54,18 @@ This repository contains:
     offsetRight: 24,
     offsetBottom: 24,
   });
-  // That's it — click the floating bubble to open the chat.
+  // That's it - click the floating bubble to open the chat.
   // Press "Start Chat" to begin (or fill the pre‑chat form if enabled).
 </script>
 ```
 
 You can also use the provided `testing.html` as a working demo — update its `webhookUrl` to your endpoint and open it in a browser.
 
+### Screenshots of the Widget
+<div style="display: flex; justify-content: space-between; margin: 20px 0;">
+    <img src="images/one.png" alt="Chat Widget Preview 1" style="width: 48%;">
+    <img src="images/two.png" alt="Chat Widget Preview 2" style="width: 48%;">
+</div>
 
 ### How It Works
 When a user sends a message:
