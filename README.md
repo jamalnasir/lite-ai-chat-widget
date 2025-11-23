@@ -188,6 +188,3 @@ Minimal n8n response example (Function or Set node):
 ```js
 return [{ json: { output: "Hello! This is n8n responding." } }];
 ```
-
-### License
-This project is provided as‑is, without warranty. Include your chosen license here (MIT, Apache‑2.0, etc.).
