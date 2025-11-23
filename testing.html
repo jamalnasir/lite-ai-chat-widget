@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live Chat Testing</title>
+
+</head>
+<body>
+  
+  <!-- 1) Include the widget script (from your own hosting / CDN) -->
+<script src="chatbot-widget.js"></script>
+
+<!-- 2) Initialize it -->
+<script>
+  ChatbotWidget.init({
+    webhookUrl: "https://n8n.unravelers.cloud/webhook/2ad6f3e7-e23f-4736-a721-6f6f7f458053/chat",
+    primaryColor: "green",   // button + user bubble
+    botChatColor: "#333", // bot chat font color
+    userChatColor: "white", // use chat font color
+    bubbleColor: "#e5e7eb",     // bot bubble
+    chatButtons: "green", // start button + button at the bottom
+    chatSessionKey: 'sessionId',
+    chatInputKey: "chatInput",
+    replyKey: "output",
+    logoUrl: "https://unravelers.tech/wp-content/uploads/2024/03/Logo-02-scaled.webp",
+    companyName: "Unravelers Assistant",
+    initialGreeting: "Hi {name}! I am your assistant. How can I help you today?",
+    offsetRight: 24,
+    offsetBottom: 24,
+    renderPreChatForm: false,
+    preChatFormUrl: "https://n8n.unravelers.cloud/webhook-test/2e4f19e3-adb7-43e4-ab12-8a71372570cf",
+    sendFormDataWithMessages: true
+  });
+</script>
+  
+</body>
+</html>
