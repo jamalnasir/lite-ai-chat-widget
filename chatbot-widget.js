@@ -227,7 +227,7 @@
               ${
         config.logoUrl
             ? `<img src="${config.logoUrl}">`
-            : `<div style="width:28px;height:28px;border-radius:6px;background:#ffffff33;"></div>`
+            : `<div style="min-width: 28px;height: 28px;border-radius: 6px;background: #ffffff33;padding: 3px 10px 0px 10px;">Live Chat</div>`
     }
             </div>
             <div style="font-weight:600; font-size:14px;">
