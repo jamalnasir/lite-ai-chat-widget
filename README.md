@@ -63,8 +63,9 @@ You can also use the provided `testing.html` as a working demo — update its `w
 
 ### Screenshots of the Widget
 <div style="display: flex; justify-content: space-between; margin: 20px 0;">
-    <img src="images/one.png" alt="Chat Widget Preview 1" style="width: 48%;">
-    <img src="images/two.png" alt="Chat Widget Preview 2" style="width: 48%;">
+     <img src="images/one.png" alt="Chat Widget Preview 1" style="width: 31%;">
+    <img src="images/two.png" alt="Chat Widget Preview 2" style="width: 31%;">
+    <img src="images/three.png" alt="Chat Widget Preview 2" style="width: 31%;">
 </div>
 
 ### How It Works
@@ -188,3 +189,4 @@ Minimal n8n response example (Function or Set node):
 ```js
 return [{ json: { output: "Hello! This is n8n responding." } }];
 ```
+
