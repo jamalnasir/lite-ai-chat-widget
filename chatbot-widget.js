@@ -1,79 +1,79 @@
 // chatbot-widget.js
 (function () {
-  const DEFAULTS = {
-    primaryColor: "#2563eb",
-    bubbleColor: "#e5e7eb",
-      botChatColor: "#ffffff",
-      userChatColor: "#ffffff",
-      chatButtons: "blue",
-    logoUrl: "",
-    companyName: "Chat Assistant",
-    initialGreeting: "Hi! How can I help you?",
-    webhookUrl: "",
+    const DEFAULTS = {
+        primaryColor: "#2563eb",
+        bubbleColor: "#e5e7eb",
+        botChatColor: "#ffffff",
+        userChatColor: "#ffffff",
+        chatButtons: "blue",
+        logoUrl: "",
+        companyName: "Chat Assistant",
+        initialGreeting: "Hi! How can I help you?",
+        webhookUrl: "",
 
-    chatSessionKey: "sessionId",
-    chatInputKey: "userInput",
-    replyKey: "output",
+        chatSessionKey: "sessionId",
+        chatInputKey: "userInput",
+        replyKey: "output",
 
-    renderPreChatForm: false,
-    preChatFormUrl: "",
-    sendFormDataWithMessages: true,
+        renderPreChatForm: false,
+        preChatFormUrl: "",
+        sendFormDataWithMessages: true,
 
-    offsetRight: 24,
-    offsetBottom: 24,
-    zIndex: 999999
-  };
+        offsetRight: 24,
+        offsetBottom: 24,
+        zIndex: 999999
+    };
 
-  let config = {};
-  let dom = {};
+    let config = {};
+    let dom = {};
 
-  function mergeConfig(user) {
-    return { ...DEFAULTS, ...(user || {}) };
-  }
-
-  function escapeHtml(s) {
-      return s;
-    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  }
-
-  function getSessionId() {
-    let id = sessionStorage.getItem("cbw-session-id");
-    if (!id) {
-      id = Math.random().toString(36).slice(2) + Date.now();
-      sessionStorage.setItem("cbw-session-id", id);
+    function mergeConfig(user) {
+        return {...DEFAULTS, ...(user || {})};
     }
-    return id;
-  }
 
-  function savePreChat(data) {
-      sessionStorage.setItem("cbw-prechat", JSON.stringify(data));
-  }
+    function escapeHtml(s) {
+        return s;
+        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
 
-  function loadPreChat() {
-    const d = sessionStorage.getItem("cbw-prechat");
-    return d ? JSON.parse(d) : null;
-  }
+    function getSessionId() {
+        let id = sessionStorage.getItem("cbw-session-id");
+        if (!id) {
+            id = Math.random().toString(36).slice(2) + Date.now();
+            sessionStorage.setItem("cbw-session-id", id);
+        }
+        return id;
+    }
 
-  //-------------------------------------------------------------
-  // HOST
-  //-------------------------------------------------------------
-  function createHost() {
-    const host = document.createElement("div");
-    host.style.position = "fixed";
-    host.style.bottom = config.offsetBottom + "px";
-    host.style.right = config.offsetRight + "px";
-    host.style.zIndex = config.zIndex;
-    document.body.appendChild(host);
+    function savePreChat(data) {
+        sessionStorage.setItem("cbw-prechat", JSON.stringify(data));
+    }
 
-    dom.shadow = host.attachShadow({ mode: "open" });
-  }
+    function loadPreChat() {
+        const d = sessionStorage.getItem("cbw-prechat");
+        return d ? JSON.parse(d) : null;
+    }
 
-  //-------------------------------------------------------------
-  // STYLES
-  //-------------------------------------------------------------
-  function buildStyles() {
-    const css = document.createElement("style");
-    css.textContent = `
+    //-------------------------------------------------------------
+    // HOST
+    //-------------------------------------------------------------
+    function createHost() {
+        const host = document.createElement("div");
+        host.style.position = "fixed";
+        host.style.bottom = config.offsetBottom + "px";
+        host.style.right = config.offsetRight + "px";
+        host.style.zIndex = config.zIndex;
+        document.body.appendChild(host);
+
+        dom.shadow = host.attachShadow({mode: "open"});
+    }
+
+    //-------------------------------------------------------------
+    // STYLES
+    //-------------------------------------------------------------
+    function buildStyles() {
+        const css = document.createElement("style");
+        css.textContent = `
       :host { font-family: system-ui, sans-serif; }
 
       .cbw-bubble-btn,
@@ -212,29 +212,29 @@
         display:none;
       }
     `;
-    return css;
-  }
+        return css;
+    }
 
-  //-------------------------------------------------------------
-  // HTML
-  //-------------------------------------------------------------
-  function buildHTML() {
-    const root = document.createElement("div");
-    root.innerHTML = `
+    //-------------------------------------------------------------
+    // HTML
+    //-------------------------------------------------------------
+    function buildHTML() {
+        const root = document.createElement("div");
+        root.innerHTML = `
       <div class="cbw-window">
         <div class="cbw-header">
           <div style="display:flex; flex-direction:column; align-items:center; width:100%;">
             <div class="cbw-header-logo" style="margin-bottom:8px;">
               ${
-        config.logoUrl
-            ? `<img src="${config.logoUrl}">`
-            : `<div style="min-width: 28px;height: 28px;border-radius: 6px;background: #ffffff33;padding: 3px 10px 0px 10px;">Live Chat</div>`
-    }
+            config.logoUrl
+                ? `<img src="${config.logoUrl}">`
+                : `<div style="min-width: 28px;height: 28px;border-radius: 6px;background: #ffffff33;padding: 3px 10px 0px 10px;">Live Chat</div>`
+        }
             </div>
             ${
-        config.companyName
-            ? `<div style="font-size: 12px; color: #ffffffcc; font-weight: 600;">${escapeHtml(config.companyName)}</div>` : ''
-    }
+            config.companyName
+                ? `<div style="font-size: 12px; color: #ffffffcc; font-weight: 600;">${escapeHtml(config.companyName)}</div>` : ''
+        }
             
           </div>
         </div>
@@ -290,197 +290,196 @@
       </div>
     `;
 
-    dom.bubble = root.querySelector(".cbw-bubble-btn");
-      dom.bubbleClose = root.querySelector(".cbw-bubble-btn-close");
-      dom.window = root.querySelector(".cbw-window");
-    dom.startBtn = root.querySelector(".cbw-start-btn");
-    dom.form = root.querySelector(".cbw-prechat-form");
-    dom.messages = root.querySelector(".cbw-messages");
-      dom.typing = root.querySelector(".cbw-typing");
-      dom.input = root.querySelector(".cbw-input");
-    dom.sendBtn = root.querySelector(".cbw-send-btn");
+        dom.bubble = root.querySelector(".cbw-bubble-btn");
+        dom.bubbleClose = root.querySelector(".cbw-bubble-btn-close");
+        dom.window = root.querySelector(".cbw-window");
+        dom.startBtn = root.querySelector(".cbw-start-btn");
+        dom.form = root.querySelector(".cbw-prechat-form");
+        dom.messages = root.querySelector(".cbw-messages");
+        dom.typing = root.querySelector(".cbw-typing");
+        dom.input = root.querySelector(".cbw-input");
+        dom.sendBtn = root.querySelector(".cbw-send-btn");
 
-    root.style.setProperty("--cbw-primary", config.primaryColor);
-    root.style.setProperty("--cbw-bubble", config.bubbleColor);
-    root.style.setProperty("--bot-chat-color", config.botChatColor);
-    root.style.setProperty("--user-chat-color", config.userChatColor);
-    root.style.setProperty("--chat-buttons-color", config.chatButtons);
+        root.style.setProperty("--cbw-primary", config.primaryColor);
+        root.style.setProperty("--cbw-bubble", config.bubbleColor);
+        root.style.setProperty("--bot-chat-color", config.botChatColor);
+        root.style.setProperty("--user-chat-color", config.userChatColor);
+        root.style.setProperty("--chat-buttons-color", config.chatButtons);
 
-    return root;
-  }
+        return root;
+    }
 
     let formData = {};
 
-  //-------------------------------------------------------------
-  // CHAT
-  //-------------------------------------------------------------
-  function startChat(forceChat=false) {
-	  if(config.renderPreChatForm && !forceChat)
-	  {
-		dom.form.style.display = "block";  
-	  } else {		  
-		dom.form.style.display = "none";
-		dom.messages.style.display = "block";
-		dom.input.style.display = "block";
-		dom.sendBtn.style.display = "block";
+    //-------------------------------------------------------------
+    // CHAT
+    //-------------------------------------------------------------
+    function startChat(forceChat = false) {
+        if (config.renderPreChatForm && !forceChat) {
+            dom.form.style.display = "block";
+        } else {
+            dom.form.style.display = "none";
+            dom.messages.style.display = "block";
+            dom.input.style.display = "block";
+            dom.sendBtn.style.display = "block";
 
-          const formName = dom.form?.name?.value || '';
-          const greeting = config.initialGreeting.replace("{name}", formName ? formName : '');
-          addMessage(greeting, "bot");
-      }
-  }
+            const formName = dom.form?.name?.value || '';
+            const greeting = config.initialGreeting.replace("{name}", formName ? formName : '');
+            addMessage(greeting, "bot");
+        }
+    }
 
-  function addMessage(text, sender) {
-    const row = document.createElement("div");
-    row.className = `cbw-msg-row cbw-msg-row-${sender}`;
+    function addMessage(text, sender) {
+        const row = document.createElement("div");
+        row.className = `cbw-msg-row cbw-msg-row-${sender}`;
 
-    const msg = document.createElement("div");
-    msg.className = `cbw-msg cbw-msg-${sender}`;
-    // msg.textContent = text;
-    msg.innerHTML = text;
+        const msg = document.createElement("div");
+        msg.className = `cbw-msg cbw-msg-${sender}`;
+        // msg.textContent = text;
+        msg.innerHTML = text;
 
-    row.appendChild(msg);
-    dom.messages.appendChild(row);
-    dom.messages.parentElement.scrollTop = dom.messages.parentElement.scrollHeight;
-      // dom.messages.scrollTop = dom.messages.scrollHeight;
-  }
+        row.appendChild(msg);
+        dom.messages.appendChild(row);
+        dom.messages.parentElement.scrollTop = dom.messages.parentElement.scrollHeight;
+        // dom.messages.scrollTop = dom.messages.scrollHeight;
+    }
 
-  function sendMsg(text) {
-    addMessage(text, "user");
-    dom.input.value = "";
+    function sendMsg(text) {
+        addMessage(text, "user");
+        dom.input.value = "";
 
-    const sessionId = getSessionId();
-    const pre = loadPreChat();
+        const sessionId = getSessionId();
+        const pre = loadPreChat();
 
-    const payload = {
-      action: "sendMessage",
-      sessionId,
-      [config.chatSessionKey]: sessionId,
-      [config.chatInputKey]: text
-    };
-
-    if (config.sendFormDataWithMessages && pre) payload.preChat = pre;
-
-      const formEmail = formData.email;
-      if (formEmail) {
-          payload.name = formData.name;
-          payload.email = formData.email;
-          payload.phone = formData.phone;
-      }
-
-      dom.typing.style.display = "block";
-      fetch(config.webhookUrl, {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(payload)
-      })
-          .then(r => r.json())
-          .then(r => {
-              dom.typing.style.display = "none";
-              addMessage(r[config.replyKey] || "No reply", "bot");
-          })
-          .catch(() => {
-              dom.typing.style.display = "none";
-              addMessage("Server error", "bot");
-          });
-  }
-
-  //-------------------------------------------------------------
-  // EVENTS
-  //-------------------------------------------------------------
-  function attachEvents() {
-    dom.messages.style.display = "none";
-
-    dom.bubble.addEventListener("click", () => {
-      dom.window.style.display = "flex";
-        dom.bubble.style.display = "none";
-        dom.bubbleClose.style.display = "flex";
-    });
-
-      dom.bubbleClose.addEventListener("click", () => {
-          dom.window.style.display = "none";
-          dom.bubble.style.display = "flex";
-          dom.bubbleClose.style.display = "none";
-      });
-
-    dom.startBtn.addEventListener("click", () => {
-      dom.startBtn.style.display = "none";
-
-      if (config.renderPreChatForm && !loadPreChat()) {
-        dom.form.style.display = "block";
-      } else {
-        startChat();
-      }
-    });
-
-      dom.form.addEventListener("submit", async (e) => {
-	  e.preventDefault();
-
-        formData = {
-            name: dom.form.name.value.trim(),
-            email: dom.form.email.value.trim(),
-            phone: dom.form.phone.value.trim(),
-            sessionId: getSessionId()
+        const payload = {
+            action: "sendMessage",
+            sessionId,
+            [config.chatSessionKey]: sessionId,
+            [config.chatInputKey]: text
         };
 
-          // Send form data to configured backend
-	  if (config.preChatFormUrl && config.preChatFormUrl.length > 0) {
-		try {
-            const errorLabel = dom.form.querySelector('.form-error-message');
-            errorLabel.style.display = 'none';
+        if (config.sendFormDataWithMessages && pre) payload.preChat = pre;
 
-            const response = await fetch(config.preChatFormUrl, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                throw new Error('Form submission failed');
-            }
-
-            // Save locally
-            savePreChat(formData);
-            startChat(true);
-        } catch (err) {
-            console.warn("Pre-chat form submission failed:", err);
-            const errorLabel = dom.form.querySelector('.form-error-message');
-            errorLabel.style.display = 'block';
-            return;
+        const formEmail = formData.email;
+        if (formEmail) {
+            payload.name = formData.name;
+            payload.email = formData.email;
+            payload.phone = formData.phone;
         }
-	  }
-	});
 
-    dom.sendBtn.addEventListener("click", () => {
-      const t = dom.input.value.trim();
-      if (t) sendMsg(t);
-    });
+        dom.typing.style.display = "block";
+        fetch(config.webhookUrl, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        })
+            .then(r => r.json())
+            .then(r => {
+                dom.typing.style.display = "none";
+                addMessage(r[config.replyKey] || "No reply", "bot");
+            })
+            .catch(() => {
+                dom.typing.style.display = "none";
+                addMessage("Server error", "bot");
+            });
+    }
 
-    dom.input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        const t = dom.input.value.trim();
-        if (t) sendMsg(t);
-      }
-    });
-  }
+    //-------------------------------------------------------------
+    // EVENTS
+    //-------------------------------------------------------------
+    function attachEvents() {
+        dom.messages.style.display = "none";
 
-  //-------------------------------------------------------------
-  // INIT
-  //-------------------------------------------------------------
-  function init(userConfig) {
-    config = mergeConfig(userConfig);
+        dom.bubble.addEventListener("click", () => {
+            dom.window.style.display = "flex";
+            dom.bubble.style.display = "none";
+            dom.bubbleClose.style.display = "flex";
+        });
 
-    createHost();
+        dom.bubbleClose.addEventListener("click", () => {
+            dom.window.style.display = "none";
+            dom.bubble.style.display = "flex";
+            dom.bubbleClose.style.display = "none";
+        });
 
-    const styles = buildStyles();
-    const html = buildHTML();
+        dom.startBtn.addEventListener("click", () => {
+            dom.startBtn.style.display = "none";
 
-    dom.shadow.appendChild(styles);
-    dom.shadow.appendChild(html);
+            if (config.renderPreChatForm && !loadPreChat()) {
+                dom.form.style.display = "block";
+            } else {
+                startChat();
+            }
+        });
 
-    attachEvents();
-  }
+        dom.form.addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-  window.ChatbotWidget = { init };
+            formData = {
+                name: dom.form.name.value.trim(),
+                email: dom.form.email.value.trim(),
+                phone: dom.form.phone.value.trim(),
+                sessionId: getSessionId()
+            };
+
+            // Send form data to configured backend
+            if (config.preChatFormUrl && config.preChatFormUrl.length > 0) {
+                try {
+                    const errorLabel = dom.form.querySelector('.form-error-message');
+                    errorLabel.style.display = 'none';
+
+                    const response = await fetch(config.preChatFormUrl, {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Form submission failed');
+                    }
+
+                    // Save locally
+                    savePreChat(formData);
+                    startChat(true);
+                } catch (err) {
+                    console.warn("Pre-chat form submission failed:", err);
+                    const errorLabel = dom.form.querySelector('.form-error-message');
+                    errorLabel.style.display = 'block';
+                    return;
+                }
+            }
+        });
+
+        dom.sendBtn.addEventListener("click", () => {
+            const t = dom.input.value.trim();
+            if (t) sendMsg(t);
+        });
+
+        dom.input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const t = dom.input.value.trim();
+                if (t) sendMsg(t);
+            }
+        });
+    }
+
+    //-------------------------------------------------------------
+    // INIT
+    //-------------------------------------------------------------
+    function init(userConfig) {
+        config = mergeConfig(userConfig);
+
+        createHost();
+
+        const styles = buildStyles();
+        const html = buildHTML();
+
+        dom.shadow.appendChild(styles);
+        dom.shadow.appendChild(html);
+
+        attachEvents();
+    }
+
+    window.ChatbotWidget = {init};
 })();
