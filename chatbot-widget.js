@@ -33,7 +33,7 @@
 
     function escapeHtml(s) {
         return s;
-        return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        // return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     function getSessionId() {
@@ -79,8 +79,8 @@
       .cbw-bubble-btn,
       .cbw-bubble-btn-close {
         position: fixed;
-        right: 24px;
-        bottom: 24px;
+        right: var(--chat-bubble-button-right);
+        bottom: var(--chat-bubble-button-bottom);
         width: 60px; height: 60px;
         background: var(--chat-buttons-color);
         border-radius: 50%;
@@ -305,6 +305,8 @@
         root.style.setProperty("--bot-chat-color", config.botChatColor);
         root.style.setProperty("--user-chat-color", config.userChatColor);
         root.style.setProperty("--chat-buttons-color", config.chatButtons);
+        root.style.setProperty("--chat-bubble-button-bottom", config.offsetBottom + 'px');
+        root.style.setProperty("--chat-bubble-button-right", config.offsetRight + 'px');
 
         return root;
     }
