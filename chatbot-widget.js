@@ -32,6 +32,7 @@
   }
 
   function escapeHtml(s) {
+      return s;
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
 
@@ -45,7 +46,7 @@
   }
 
   function savePreChat(data) {
-    sessionStorage.setItem("cbw-prechat", '');
+      sessionStorage.setItem("cbw-prechat", JSON.stringify(data));
   }
 
   function loadPreChat() {
@@ -93,8 +94,8 @@
       }
 
       .cbw-window {
-        width: 320px; background:#fff;
-        height: 430px; max-height: 70vh;
+        width: 400px; background:#fff;
+        height: 600px; max-height: 70vh;
         border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0,0,0,.25);
         display:none; flex-direction:column;
@@ -118,7 +119,7 @@
 
       .cbw-header-logo img {
         width: auto;
-        height: 30px;
+        max-height: 50px;
       }
 
       .cbw-body {
@@ -230,9 +231,11 @@
             : `<div style="min-width: 28px;height: 28px;border-radius: 6px;background: #ffffff33;padding: 3px 10px 0px 10px;">Live Chat</div>`
     }
             </div>
-            <div style="font-weight:600; font-size:14px;">
-              ${escapeHtml(config.companyName)}
-            </div>
+            ${
+        config.companyName
+            ? `<div style="font-size: 12px; color: #ffffffcc; font-weight: 600;">${escapeHtml(config.companyName)}</div>` : ''
+    }
+            
           </div>
         </div>
 
@@ -306,6 +309,8 @@
     return root;
   }
 
+    let formData = {};
+
   //-------------------------------------------------------------
   // CHAT
   //-------------------------------------------------------------
@@ -331,7 +336,8 @@
 
     const msg = document.createElement("div");
     msg.className = `cbw-msg cbw-msg-${sender}`;
-    msg.textContent = text;
+    // msg.textContent = text;
+    msg.innerHTML = text;
 
     row.appendChild(msg);
     dom.messages.appendChild(row);
@@ -354,6 +360,13 @@
     };
 
     if (config.sendFormDataWithMessages && pre) payload.preChat = pre;
+
+      const formEmail = formData.email;
+      if (formEmail) {
+          payload.name = formData.name;
+          payload.email = formData.email;
+          payload.phone = formData.phone;
+      }
 
       dom.typing.style.display = "block";
       fetch(config.webhookUrl, {
@@ -400,17 +413,17 @@
       }
     });
 
-    dom.form.addEventListener("submit", async (e) => {
+      dom.form.addEventListener("submit", async (e) => {
 	  e.preventDefault();
 
-	  const data = {
-		name: dom.form.name.value.trim(),
-		email: dom.form.email.value.trim(),
-		phone: dom.form.phone.value.trim(),
-		sessionId: getSessionId()
-	  };
+        formData = {
+            name: dom.form.name.value.trim(),
+            email: dom.form.email.value.trim(),
+            phone: dom.form.phone.value.trim(),
+            sessionId: getSessionId()
+        };
 
-	  // Send form data to configured backend
+          // Send form data to configured backend
 	  if (config.preChatFormUrl && config.preChatFormUrl.length > 0) {
 		try {
             const errorLabel = dom.form.querySelector('.form-error-message');
@@ -419,7 +432,7 @@
             const response = await fetch(config.preChatFormUrl, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(data)
+                body: JSON.stringify(formData)
             });
 
             if (!response.ok) {
@@ -427,7 +440,7 @@
             }
 
             // Save locally
-            savePreChat(data);
+            savePreChat(formData);
             startChat(true);
         } catch (err) {
             console.warn("Pre-chat form submission failed:", err);
